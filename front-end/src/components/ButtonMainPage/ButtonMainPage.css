@@ -2,11 +2,33 @@
     background: var(--grey);
     color: #000;
     padding: 8px;
-    width: 50%;    
-    font-size: 19px;    
+    width: fit-content;    
+    height: 40px;
+    font-size: 15px;
+    font-weight: 600;
     text-transform: uppercase;   
     letter-spacing: 3px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+.button_main_page:active{
+    transform: scale(0.95); 
+}
+
+#right_button_2{
+    background: var(--salmon);
+}
+
+.button_icon{
+    width: 20px;
+    height: 15px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
