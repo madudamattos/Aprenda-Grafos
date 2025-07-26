@@ -1,0 +1,54 @@
+# Pasta front-end
+
+# Logs
+front-end/logs
+front-end/*.log
+front-end/npm-debug.log*
+front-end/yarn-debug.log*
+front-end/yarn-error.log*
+front-end/pnpm-debug.log*
+front-end/lerna-debug.log*
+
+# Dependency directories
+front-end/node_modules/
+
+# Build artifacts
+front-end/dist/
+front-end/build/
+front-end/dist-ssr
+
+# Vite specific
+front-end/.vite/
+
+# Editor/IDE specific
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.iml
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment variables
+front-end/.env
+front-end/.env.local
+front-end/.env.*.local
+
+# npm package manager cache
+.npm/
+front-end/.npm/
+
+# Others
+front-end/coverage/
+front-end/*.tgz
+front-end/*.zip
+front-end/.cache/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Pasta back-end
