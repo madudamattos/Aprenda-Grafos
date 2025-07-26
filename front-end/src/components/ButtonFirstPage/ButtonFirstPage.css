@@ -1,0 +1,34 @@
+.button_first_page button {
+    background: var(--brown);
+    color: #fff;
+    padding: 10px 20px;
+    width: 160px;
+    height: 55px;
+    border: none;
+    border-radius: 10px;
+    font-size: 19px;
+    margin: 0px 20px 40px 20px;
+    text-transform: uppercase;   
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button_first_page button a{
+    text-decoration: none;
+    color: #fff;
+}
+
+.button_first_page button:hover{
+    transform: scale(1.10);
+}
+
+.button_first_page button:active{
+    transform: scale(0.95);
+}
+
+#button_tutorial{
+    background: var(--red);
+    color: #fff;
+    padding: 10px 20px;
+}

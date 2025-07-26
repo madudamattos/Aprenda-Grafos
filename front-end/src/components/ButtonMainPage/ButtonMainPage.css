@@ -1,0 +1,12 @@
+.button_main_page {
+    background: var(--grey);
+    color: #000;
+    padding: 8px;
+    width: 50%;    
+    font-size: 19px;    
+    text-transform: uppercase;   
+    letter-spacing: 3px;
+    cursor: pointer;
+
+}
+

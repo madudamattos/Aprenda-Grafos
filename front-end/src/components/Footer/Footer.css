@@ -1,0 +1,11 @@
+.container_footer{
+    background-color: var(--brown);
+    height: 3.5vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--salmon);
+    text-transform: uppercase;
+    padding: 5px 0px 0px 0px;
+}
