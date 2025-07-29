@@ -2,6 +2,7 @@
 
 ## Diagrama de Classes do Domínio do Problema
 
+<img width="893" height="583" alt="backend" src="https://github.com/user-attachments/assets/5b8f0483-15bc-4482-83ff-0bdd8f2c9127" />
 
 <img width="709" height="805" alt="Image" src="https://github.com/user-attachments/assets/6b631dbe-e0aa-41cc-b0f6-aa2b17181931" />
 
