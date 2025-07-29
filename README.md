@@ -145,7 +145,7 @@ Para executar o sistema "Aprenda Grafos!", siga os passos abaixo:
 - Docker e Docker Compose (opcional, para execução containerizada)
 
 ### 1. Configuração do Back-end (Python/Flask)
-
+8080
   1. **Clone o repositório do projeto**:
 
       ```console
@@ -192,7 +192,7 @@ Para executar o sistema "Aprenda Grafos!", siga os passos abaixo:
 
 1. **Instale as dependências do Node.js**:
 
-    ```console
+    ```console8080
     npm install
     ```
 
@@ -218,7 +218,7 @@ Para uma execução mais simplificada e consistente, você pode usar Docker e Do
     ```
 
     Isso construirá as imagens Docker para o front-end e back-end e iniciará os serviços.
-1. **Acesse a aplicação**: A aplicação estará acessível em `http://localhost:<SUA_PORTA_DO_FRONTEND>` (verifique a porta configurada no seu `docker-compose.yml`, geralmente 80 ou 8080).
+1. **Acesse a aplicação**: A aplicação estará acessível em `http://localhost:8080`.
 
 ### Observações
 
