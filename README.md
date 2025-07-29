@@ -3,6 +3,7 @@
 ## Diagrama de Classes do Domínio do Problema
 
 
+<img width="709" height="805" alt="Image" src="https://github.com/user-attachments/assets/6b631dbe-e0aa-41cc-b0f6-aa2b17181931" />
 
 ### Explicação do Diagrama de Classes
 
