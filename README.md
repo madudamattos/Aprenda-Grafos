@@ -125,7 +125,7 @@ Para gerar a documentação do código Python, utilizaremos o **Sphinx** com o *
         """
         # ...
     ```
-<img width="893" height="583" alt="Image" src="https://github.com/user-attachments/assets/f40deeeb-7b95-444e-96ed-d2b1e1579b1e" />
+    
 1. **Gerar a documentação**: No diretório `docs`, execute:
 
     ```console
