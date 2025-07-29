@@ -2,74 +2,26 @@
 
 ## Diagrama de Classes do Domínio do Problema
 
-classes: Grafo, LeGrafos, AlgoritmoGrafo
 
-```javascript
-classDiagram
-    class Grafo {
-        +List<Vertice> vertices
-        +List<Aresta> arestas
-        +adicionarVertice(Vertice v)
-        +adicionarAresta(Aresta a)
-        +removerVertice(Vertice v)
-        +removerAresta(Aresta a)
-        +toJSON(): String
-    }
-
-    class Vertice {
-        +String id
-        +String label
-        +double x
-        +double y
-        +List<Aresta> arestasIncidentes
-    }
-
-    class Aresta {
-        +Vertice origem
-        +Vertice destino
-        +double peso
-        +boolean direcionada
-    }
-
-    class AlgoritmoGrafo {
-        +String nome
-        +String descricao
-        +executar(Grafo g): List<PassoExecucao>
-    }
-
-    class PassoExecucao {
-        +int numeroPasso
-        +String descricao
-        +EstadoGrafo estadoGrafo
-    }
-
-    class EstadoGrafo {
-        +Map<String, String> estadoVertices
-        +Map<String, String> estadoArestas
-    }
-
-    class Usuario {
-        +String id
-        +String nome
-        +List<Grafo> grafosSalvos
-    }
-
-    Grafo "1" -- "*" Vertice : contém
-    Grafo "1" -- "*" Aresta : conecta
-    Vertice "1" -- "*" Aresta : conecta
-    AlgoritmoGrafo "1" -- "*" PassoExecucao : gera
-    Usuario "1" -- "*" Grafo : salva
-```
 
 ### Explicação do Diagrama de Classes
 
-- `Grafo`: Representa a estrutura principal, contendo vértices e arestas. Possui métodos para manipulação do grafo e para serialização em JSON.
-- `Vertice`: Representa um nó no grafo, com um ID único, um rótulo e coordenadas para posicionamento visual.
-- `Aresta`: Representa uma conexão entre dois vértices, podendo ter um peso e ser direcionada ou não.
-- `AlgoritmoGrafo`: Classe abstrata ou interface que define a estrutura para os algoritmos de grafos a serem implementados (ex: Busca em Largura, Dijkstra).
-- `PassoExecucao`: Representa um único passo na execução animada de um algoritmo, contendo uma descrição textual e o estado visual do grafo naquele momento.
-- `EstadoGrafo`: Captura o estado dos vértices e arestas (cores, realces, etc.) em um determinado passo da execução do algoritmo.
-- `Usuario`: Representa o usuário da aplicação, que pode salvar seus próprios grafos.
+O diagrama está dividido em duas arquiteturas principais: Backend, onde a lógica dos algoritmos é processada, e Frontend, onde a visualização e a interação com o usuário ocorrem.
+
+#### Backend
+
+- `Algorithm (Abstrata)`: Define a estrutura base para todos os algoritmos. Ela gerencia o estado da execução (`currentStep`), o grafo original e o grafo no estado atual (`originalGraph`, `currentGraph`). O método `nextStep()` é implementado por suas subclasses para avançar a lógica do algoritmo.
+- `AlgorithmDijkstra`, `AlgorithmBFS`, etc.: São as implementações concretas que herdam da classe `Algorithm`. Cada uma contém a lógica específica para seu respectivo algoritmo (Dijkstra, Busca em Largura, etc.).
+- `GraphJSONUtil`: Classe utilitária que serializa o estado do grafo para o formato JSON (`toJSON`) e o desserializa de volta para um objeto grafo (`fromJSON`), facilitando a comunicação com o Frontend.
+- `networkx.Graph`: Uma biblioteca externa que fornece a estrutura de dados do grafo utilizada pelos algoritmos no Backend.
+
+#### Frontend
+
+- `Node`: Representa um nó (vértice) na interface gráfica. Possui atributos como `id`, coordenadas (`x`, `y`) e `color`.
+- `Edge`: Representa uma aresta que conecta dois objetos `Node` (`source` e `target`). Contém um `id`, um peso (`weight`) e uma cor para a sua exibição.
+- `Graph`: Classe que age como um contêiner, agrupando e gerenciando todos os Nodes e Edges que compõem o grafo a ser renderizado na tela.
+- `Algorithm` (Abstrata): A contraparte do Backend no Frontend. É responsável por controlar a animação do algoritmo e fornecer o código fonte através do método `getText()`.
+- `AlgorithmDijkstra`, `AlgorithmBFS`, etc.: Implementações que herdam da classe `Algorithm` do Frontend. Elas definem como o estado visual do grafo é atualizado a cada passo (`nextStep()`) e o código que deve ser exibido.
 
 ## Tecnologias e Ferramentas Escolhidas
 
@@ -87,11 +39,11 @@ classDiagram
 ### Ferramentas de Desenvolvimento
 
 - **Controle de Versão**: Git
-- **Build** 
-  - **Front-end**: NPM 
-  - **Back-end**: Poetry
+- **Build**
+  - **Front-end**: npm
+  - **Back-end**: Poetry 
 - **Testes**
-  - **Front-end**: Jest (para testes unitários de JavaScript/React).
+  - **Front-end**: Jest (para testes unitários de JavaScript).
   - **Back-end**: Pytest (para testes unitários e de integração em Python).
 - **Issue Tracking**: GitHub Issues
 - **CI/CD**: GitHub Actions
@@ -182,7 +134,7 @@ Para gerar a documentação do código Python, utilizaremos o **Sphinx** com o *
 
 ## Como Executar o Sistema
 
-Para executar o sistema, siga os passos abaixo:
+Para executar o sistema "Aprenda Grafos!", siga os passos abaixo:
 
 ### Pré-requisitos
 
@@ -242,7 +194,7 @@ Para executar o sistema, siga os passos abaixo:
     npm install
     ```
 
-1. **Inicie o servidor de desenvolvimento (se aplicável)**:
+1. **Inicie o servidor de desenvolvimento**:
     Se você estiver usando um servidor de desenvolvimento para React (ex: http-server):
 
     ```console
@@ -251,7 +203,7 @@ Para executar o sistema, siga os passos abaixo:
 
     Caso contrário, você pode abrir o arquivo `index.html` diretamente no seu navegador, mas para requisições AJAX ao back-end, um servidor HTTP é recomendado para evitar problemas de CORS.
 
-### 3. Execução com Docker
+### 3. Execução com Docker (Recomendado para Produção/Desenvolvimento Simplificado)
 
 Para uma execução mais simplificada e consistente, você pode usar Docker e Docker Compose.
 
