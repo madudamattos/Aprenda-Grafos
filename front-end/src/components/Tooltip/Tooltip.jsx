@@ -10,8 +10,8 @@ const Tooltip = ({children}) => {
         onMouseLeave = {() => setShowTooltip(false)}
     >
         {children}
-        <div className ={`tooltip ${showTooltip ? "open" : ""}`}>
-            <p className = "tooltip-titulo"><strong>INSTRUÇÕES:</strong></p>
+        <div className ={`tooltip${showTooltip ? "-open" : ""}`}>
+            <p><strong>INSTRUÇÕES:</strong></p>
             <br/>
             <ul>
                 <li>Duplo clique no canvas: Criar nó</li>

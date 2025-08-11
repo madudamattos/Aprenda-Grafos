@@ -29,12 +29,7 @@
     width: 100%;
 }
 
-.button_help{      
-    position: relative;
-    bottom: calc(100% - 10px);
-    right: calc(-100% + 60px);
-}
-
+/* muda o animation control */
 .canvas_body div:nth-child(3){      
     position: relative;
     bottom: 110px;
