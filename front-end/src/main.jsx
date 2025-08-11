@@ -4,6 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import './Main.css'
 import App from './App.jsx'
 
+console.log('main.jsx loading...'); // Debug log
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
@@ -11,4 +13,6 @@ createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </StrictMode>,
 )
+
+console.log('main.jsx loaded'); // Debug log
 

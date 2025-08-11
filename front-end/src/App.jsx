@@ -1,10 +1,12 @@
 import { Route, Routes } from 'react-router-dom'
 import FirstPage from './pages/FirstPage/FirstPage'
-import './main.css'
+import './Main.css'
 import MainPage from './pages/MainPage/MainPage'
 
+console.log('App.jsx loading...'); // Debug log
 
 function App() {  
+  console.log('App component rendering...'); // Debug log
 
   return (
     <Routes>   

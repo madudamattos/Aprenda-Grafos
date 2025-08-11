@@ -1,17 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react'
-import './Body.css'
-import '../ButtonMainPage/ButtonMainPage.css'
-import ButtonMainPage from '../ButtonMainPage/ButtonMainPage'
-import AnimationControl from '../AnimationControl/AnimationControl'
-import ButtonHelp from '../ButtonHelp/ButtonHelp'
-import GraphNode from '../GraphNode/GraphNode'
-import Graph from '../../utils/Graph'
+import { useState, useRef } from 'react';
+import Graph from '../utils/Graph';
 
-const Body = () => {
+export const useGraphManager = () => {
+  console.log('useGraphManager hook initializing...'); // Debug log
+  
   const [graph] = useState(() => new Graph());
   const [nodes, setNodes] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
   const canvasRef = useRef(null);
+
+  console.log('useGraphManager hook initialized:', { graph, nodes, selectedNode }); // Debug log
 
   // Atualiza o estado dos nós quando o grafo muda
   const updateNodesState = () => {
@@ -29,6 +27,8 @@ const Body = () => {
     // Adiciona o novo nó
     const newNode = graph.addNode(x, y);
     updateNodesState();
+    
+    console.log(`Nó ${newNode.id} criado na posição (${x}, ${y})`);
   };
 
   // Manipula clique em um nó
@@ -36,9 +36,11 @@ const Body = () => {
     if (selectedNode === null) {
       // Primeiro nó selecionado
       setSelectedNode(nodeId);
+      console.log(`Nó ${nodeId} selecionado`);
     } else if (selectedNode === nodeId) {
       // Clica no mesmo nó - deseleciona
       setSelectedNode(null);
+      console.log(`Nó ${nodeId} deselecionado`);
     } else {
       // Segundo nó selecionado - conecta os nós
       if (graph.connectNodes(selectedNode, nodeId)) {
@@ -152,78 +154,24 @@ const Body = () => {
     return edges;
   };
 
-  return (
-    <section className='container_body'>
-      <div className='main_div_body'>
-        <div className='left_side'>
-            <div className='button_container_1'>
-              <ButtonMainPage>
-                <img className='button_icon' src="/src/assets/icons/list.svg" alt="Lista"/>
-                Grafo
-              </ButtonMainPage>
-              <ButtonMainPage onClick={handleLoadGraph}>
-                <img className='button_icon' src="/src/assets/icons/upload.svg" alt="Subir"/>
-                Carregar
-              </ButtonMainPage>
-              <ButtonMainPage onClick={handleSaveGraph}>
-                <img className='button_icon' src="/src/assets/icons/save.svg" alt="Salvar"/>
-                Salvar
-              </ButtonMainPage>
-              <ButtonMainPage onClick={handleClearGraph}>
-                <img className='button_icon' src="/src/assets/icons/clear2.svg" alt="Limpar"/>
-                Limpar
-              </ButtonMainPage>
-            </div>
-            <div className='canvas_body'>
-                <div className='canva' ref={canvasRef} onDoubleClick={handleCanvasDoubleClick}>
-                  {renderEdges()}
-                  {nodes.map(node => (
-                    <GraphNode
-                      key={node.id}
-                      id={node.id}
-                      x={node.x}
-                      y={node.y}
-                      onClick={handleNodeClick}
-                      onDoubleClick={handleNodeDoubleClick}
-                      isSelected={selectedNode === node.id}
-                    />
-                  ))}
-                </div>
-                <ButtonHelp className='button_help'/>
-                <AnimationControl className='animation_control'/>
-            </div>
-        </div>
-        <div className='right_side'>
-          <div className='button_container_2'>
-            <div className='button_mini_container_1'>
-              <ButtonMainPage>Pseudocódigo</ButtonMainPage>
-            </div>
-            <div className='button_mini_container_2'>
-              <ButtonMainPage id='right_button_2'>Explicação</ButtonMainPage>
-            </div>
-          </div>
-          <div className='code_body_container'>
-            <div className='code_body_border'>
-              <h2 className='code_body_title'>Informações do Grafo</h2>
-              <div className='code_body_text'>
-                <p><strong>Nós:</strong> {graph.getNodeCount()}</p>
-                <p><strong>Arestas:</strong> {graph.getEdgeCount()}</p>
-                <p><strong>Nó selecionado:</strong> {selectedNode || 'Nenhum'}</p>
-                <br />
-                <p><strong>Instruções:</strong></p>
-                <ul>
-                  <li>Duplo clique no canvas: Criar nó</li>
-                  <li>Clique em um nó: Selecionar</li>
-                  <li>Clique em outro nó: Conectar nós</li>
-                  <li>Duplo clique em um nó: Remover nó</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-export default Body
+  return {
+    // Estados
+    nodes,
+    selectedNode,
+    canvasRef,
+    
+    // Funções
+    updateNodesState,
+    handleCanvasDoubleClick,
+    handleNodeClick,
+    handleNodeDoubleClick,
+    handleClearGraph,
+    handleSaveGraph,
+    handleLoadGraph,
+    renderEdges,
+    
+    // Métodos do grafo (para informações)
+    getNodeCount: () => graph.getNodeCount(),
+    getEdgeCount: () => graph.getEdgeCount()
+  };
+};
