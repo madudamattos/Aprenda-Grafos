@@ -1,0 +1,51 @@
+[
+    {
+        "id": "bfs",
+        "title": "Pseudocódigo",
+        "content": [
+            {
+                "p1": "INICIO",
+                "p2": "Para cada vértice v ∈ V faça",
+                "p3": "    cor[v] ← branco",
+                "p4": "    d[v] ← ∞",
+                "p5": "    pai[v] ← NULL",
+                "p6": "cor[s] ← cinza",
+                "p7": "d[s] ← 0",
+                "p8": "pai[s] ← NULL",
+                "p9": "Crie uma fila Q e insira s em Q",
+                "p10": "ENQUANTO Q ≠ ∅ faça",
+                "p11": "    u ← Q.retirar()",
+                "p12": "    PARA cada v ∈ Adj[u] faça",
+                "p13": "        SE cor[v] = branco então",
+                "p14": "            cor[v] ← cinza",
+                "p15": "            d[v] ← d[u] + 1",
+                "p16": "            pai[v] ← u",
+                "p17": "            Q.inserir(v)",
+                "p18": "    cor[u] ← preto",
+                "p19": "FIM"
+            }
+        ]
+    },
+    {
+        "id": "djikstra",
+        "title": "Pseudocódigo",
+        "content": [
+            {
+                "p1": "INICIO",
+                "p2": "d(v[1]) ← 0",
+                "p3": "PARA i = 2,...,n FAÇA",
+                "p4": "    d(v[i]) ← ∞, pai(v[i]) ← NULL",
+                "p5": "ENQUANTO fila ≠ Ø FAÇA",
+                "p6": "    u = fila.extrairMin()",
+                "p7": "    PARA TODO (u,w) ∈ E FAÇA",
+                "p8": "        dist ← d(u) + l(u,w)",
+                "p9": "        SE w ∈ fila E d(w) > dist FAÇA",
+                "p10": "            d(w) = dist, pai(w) = (u,w)",
+                "p11": "        SENÃO pai(w) == NULL",
+                "p12": "            d(w) = dist, pai(w) = (u,w)",
+                "p13": "            fila.insere(w,dist)",
+                "p14": "FIM"
+            }
+        ]
+    }
+]

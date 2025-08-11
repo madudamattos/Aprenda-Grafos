@@ -1,0 +1,34 @@
+[
+    {
+        "id": "bfs",
+        "title": "Explicação",
+        "content": [
+            {
+                "titulo": "Busca em Largura (BFS)",
+                "texto": "A Busca em Largura (BFS) é um algoritmo utilizado para percorrer ou buscar elementos em grafos e árvores. Ela explora todos os vértices de um grafo de forma sistemática, visitando primeiro todos os vizinhos de um vértice antes de avançar para os vizinhos dos vizinhos. O algoritmo utiliza uma fila para controlar a ordem de visita dos vértices, garantindo que os vértices mais próximos da origem sejam visitados primeiro. Isso faz com que a BFS seja ideal para encontrar o caminho mais curto (em número de arestas) entre dois vértices em grafos não ponderados."
+            },
+            {
+                "titulo": "Como funciona a BFS",
+                "texto": "O algoritmo começa marcando o vértice inicial como visitado e o insere em uma fila. Em seguida, ele repete o seguinte processo: remove um vértice da fila, visita todos os seus vizinhos ainda não visitados, marca-os como visitados e os insere na fila. Esse processo continua até que todos os vértices acessíveis a partir do vértice inicial tenham sido visitados."
+            },
+            {
+                "titulo": "Aplicações da BFS",
+                "texto": "A BFS é utilizada em diversas aplicações, como:\n- Encontrar o caminho mais curto em grafos não ponderados;\n- Verificar a conectividade de um grafo;\n- Encontrar componentes conectados;\n- Resolver puzzles e jogos de tabuleiro, onde cada movimento pode ser representado como um vértice do grafo."
+            }
+        ]
+    },
+    {
+        "id": "djikstra",
+                "title": "Explicação",
+        "content": [
+            {
+                "titulo": "Caminhos mais curtos",
+                "texto": "Em muitas aplicações, deseja-se obter o caminho mais curto de a até b. Dependendo do contexto, o comprimento do caminho não precisa ser necessariamente uma medida em metros: também pode representar o custo do caminho — seja um valor que temos que pagar para usá-lo, ou um valor que recebemos ao utilizá-lo. De forma geral, falamos em custo. Por isso, atribuímos um custo a cada parte do caminho — também chamada de aresta. O Algoritmo de Dijkstra calcula os caminhos mais curtos — ou mais baratos — desde que todos os custos sejam números positivos. No entanto, se forem permitidos números negativos, o algoritmo falha. Por outro lado, o Algoritmo de Bellman-Ford consegue lidar com custos negativos."
+            },
+            {
+                "titulo": "Construção do Caminho Mais Curto",
+                "texto": "Cada vez que o custo de um nó é atualizado, o algoritmo salva a aresta usada nessa atualização como o predecessor do nó.\nAo final do algoritmo, o caminho mais curto até cada nó pode ser reconstruído voltando pelas arestas de predecessores, até chegar ao nó de partida.\nSe um nó não puder ser alcançado a partir do nó inicial, seu custo permanecerá infinito."
+            }
+        ]
+    }
+]

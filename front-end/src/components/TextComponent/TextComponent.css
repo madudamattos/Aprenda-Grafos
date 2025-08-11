@@ -1,0 +1,16 @@
+.code_body_container{
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    background-color: var(--grey);
+    padding: 10px;
+}
+
+.code_body_border{
+    background-color: transparent;
+    border: 1px solid var(--dark-red);
+    width: 100%;
+    height: 100%;
+    
+}
+

@@ -1,12 +1,15 @@
 import React from 'react'
 import './Body.css'
 import '../ButtonMainPage/ButtonMainPage.css'
-import ButtonMainPage from '../ButtonMainPage/ButtonMainPage'
 import AnimationControl from '../AnimationControl/AnimationControl'
 import ButtonHelp from '../ButtonHelp/ButtonHelp'
 import GraphNode from '../GraphNode/GraphNode'
 import { useGraphManager } from '../../hooks/GraphManager'
 import Tooltip from '../Tooltip/Tooltip'
+import ButtonContainer2 from '../ButtonContainer2/ButtonContainer2'
+import ButtonContainer1 from '../ButtonContainer1/ButtonContainer1'
+import { useLocation } from 'react-router-dom';
+import TextComponent from '../TextComponent/TextComponent'
 
 const Body = () => {
   const {
@@ -24,32 +27,17 @@ const Body = () => {
     getEdgeCount
   } = useGraphManager();
 
+  const routeName = location.pathname.replace('/', '');
+
   return (
     <section className='container_body'>
       <div className='main_div_body'>
         <div className='left_side'>
-            <div className='button_container_1'>
-              <ButtonMainPage>
-                <img className='button_icon' src="/src/assets/icons/list.svg" alt="Lista"/>
-                Grafo
-              </ButtonMainPage>
-              <ButtonMainPage onClick={handleLoadGraph}>
-                <img className='button_icon' src="/src/assets/icons/upload.svg" alt="Subir"/>
-                Carregar
-              </ButtonMainPage>
-              <ButtonMainPage onClick={handleSaveGraph}>
-                <img className='button_icon' src="/src/assets/icons/save.svg" alt="Salvar"/>
-                Salvar
-              </ButtonMainPage>
-              <ButtonMainPage onClick={handleClearGraph}>
-                <img className='button_icon' src="/src/assets/icons/clear2.svg" alt="Limpar"/>
-                Limpar
-              </ButtonMainPage>
-            </div>
+            <ButtonContainer1 f1={handleLoadGraph} f2={handleSaveGraph} f3={handleClearGraph}/>
             <div className='canvas_body'>
                 <div className='canva' ref={canvasRef} onDoubleClick={handleCanvasDoubleClick}>
                   {renderEdges()}
-                  {nodes.map(node => (
+                  {nodes.map(node => ( 
                     <GraphNode
                       key={node.id}
                       id={node.id}
@@ -68,26 +56,8 @@ const Body = () => {
             </div>
         </div>
         <div className='right_side'>
-          <div className='button_container_2'>
-            <div className='button_mini_container_1'>
-              <ButtonMainPage>Pseudocódigo</ButtonMainPage>
-            </div>
-            <div className='button_mini_container_2'>
-              <ButtonMainPage id='right_button_2'>Explicação</ButtonMainPage>
-            </div>
-          </div>
-          <div className='code_body_container'>
-            <div className='code_body_border'>
-              <h2 className='code_body_title'>Informações do Grafo</h2>
-              <br/>
-              <div className='code_body_text'>
-                <p><strong>Nós:</strong> {getNodeCount()}</p>
-                <p><strong>Arestas:</strong> {getEdgeCount()}</p>
-                <p><strong>Nó selecionado:</strong> {selectedNode || 'Nenhum'}</p>
-                <br />
-              </div>
-            </div>
-          </div>
+          <ButtonContainer2 name_1={"Pseudocódigo"} name_2={"Explicação"}/>
+          <TextComponent routeName={routeName}/>
         </div>
       </div>
     </section>

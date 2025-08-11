@@ -1,0 +1,22 @@
+.code_body_title{
+    font-size: 24px;
+    padding: 10px;    
+}
+
+.code_body_text{    
+    font-size: 17px;
+    line-height: 135%;
+    padding: 10px 0px 10px 0px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.code_line{
+    padding: 0px 10px 0px 10px;
+}
+
+.code_line-selected{
+    background-color: var(--yellow);
+    padding: 0px 10px 0px 10px;
+}

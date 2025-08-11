@@ -5,8 +5,8 @@
     align-items: flex-end;
     position: relative;
     position: relative;
-    bottom: calc(100% - 10px);
-    right: calc(-100% + 60px); 
+    bottom: calc(100% - 5px);
+    right: calc(-100% + 55px); 
 }
 
 .tooltip{
@@ -30,5 +30,5 @@
     opacity: 0.8;
     z-index: 200;
     top: 55px;
-    right:25px;
+    right:20px;
 }

@@ -18,7 +18,7 @@
 .left_side{
     display: flex;
     flex-direction: column;
-    width: 60%;
+    width: 70%;
     height: 100%;
     gap: 10px;
 }
@@ -32,8 +32,8 @@
 /* muda o animation control */
 .canvas_body div:nth-child(3){      
     position: relative;
-    bottom: 110px;
-    right: calc(-100% + 180px);
+    bottom: 90px;
+    right: calc(-100% + 150px);
 }
 
 .canva{
@@ -62,67 +62,9 @@
 }
 
 .right_side{
-    width: 40%;
+    width: 35%;
     height: 100%;
     background-color: var(--grey);
     display: flex;
     flex-direction: column;   
 }
-
-
-.button_container_2{
-    background-color: var(--yellow);
-    width: 100%;
-    height: 50px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    /* justify-content: space-around; */
-}
-
-.button_mini_container_1{
-    background-color: var(--grey);
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.button_mini_container_2{
-    background-color: var(--salmon);
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.code_body_container{
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    background-color: var(--grey);
-    padding: 10px;
-}
-
-.code_body_border{
-    background-color: transparent;
-    border: 1px solid var(--dark-red);
-    width: 100%;
-    height: 100%;
-    
-}
-
-.code_body_title{
-    font-size: 24px;
-    padding: 10px;    
-}
-
-.code_body_text{    
-    font-size: 20px;
-    padding: 10px;
-    display: flex;
-    flex-wrap: nowrap;
-}
-
