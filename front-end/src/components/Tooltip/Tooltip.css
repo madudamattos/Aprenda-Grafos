@@ -1,0 +1,28 @@
+.tooltip-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1px solid blue;
+}
+
+.tooltip{
+    width:280px;
+    font-size: 18px;
+    font-weight: 400;
+    background-color: var(--grey);
+    border: 1px solid red;
+    padding: 10px;
+    padding-left: 30px;
+    text-align: start;
+    position: absolute;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+    z-index: 200;
+}
+
+.tooltip-titulo{
+    font-weight: 900;
+}

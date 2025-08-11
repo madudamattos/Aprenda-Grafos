@@ -6,6 +6,7 @@ import AnimationControl from '../AnimationControl/AnimationControl'
 import ButtonHelp from '../ButtonHelp/ButtonHelp'
 import GraphNode from '../GraphNode/GraphNode'
 import { useGraphManager } from '../../hooks/GraphManager'
+import Tooltip from '../Tooltip/Tooltip'
 
 const Body = () => {
   const {
@@ -60,7 +61,9 @@ const Body = () => {
                     />
                   ))}
                 </div>
-                <ButtonHelp className='button_help'/>
+                <Tooltip infoText="ola eu sou um infotext">
+                  <ButtonHelp className='button_help'></ButtonHelp>
+                </Tooltip>
                 <AnimationControl className='animation_control'/>
             </div>
         </div>
@@ -76,18 +79,12 @@ const Body = () => {
           <div className='code_body_container'>
             <div className='code_body_border'>
               <h2 className='code_body_title'>Informações do Grafo</h2>
+              <br/>
               <div className='code_body_text'>
                 <p><strong>Nós:</strong> {getNodeCount()}</p>
                 <p><strong>Arestas:</strong> {getEdgeCount()}</p>
                 <p><strong>Nó selecionado:</strong> {selectedNode || 'Nenhum'}</p>
                 <br />
-                <p><strong>Instruções:</strong></p>
-                <ul>
-                  <li>Duplo clique no canvas: Criar nó</li>
-                  <li>Clique em um nó: Selecionar</li>
-                  <li>Clique em outro nó: Conectar nós</li>
-                  <li>Duplo clique em um nó: Remover nó</li>
-                </ul>
               </div>
             </div>
           </div>
