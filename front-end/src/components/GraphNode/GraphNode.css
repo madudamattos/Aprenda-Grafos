@@ -19,7 +19,6 @@
 }
 
 .graph-node.selected {
-    border: 1px solid var(--dark-red);
     background-color: #A3CEEF;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
