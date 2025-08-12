@@ -1,13 +1,15 @@
 import React from 'react'
 import './TextComponent.css'
 import PseudocodeComponent from './PseudocodeComponent/PseudocodeComponent'
+import ExplanationComponent from './ExplanationComponent/ExplanationComponent'
 
-const TextComponent = ({routeName}) => {
+const TextComponent = ({ routeName, activeTab }) => {
   return (
-    <div className='code_body_container'>
-        <div className='code_body_border'>
-            <PseudocodeComponent routeName={routeName}/>
-        </div>
+    <div className={`code_body_container${activeTab === 'pseudocode' ? '' : '-explicacao'}`}>
+      <div className='code_body_border'>
+        {activeTab === 'pseudocode' && <PseudocodeComponent routeName={routeName} />}
+        {activeTab === 'explanation' && <ExplanationComponent routeName={routeName} />}
+      </div>
     </div>
   )
 }

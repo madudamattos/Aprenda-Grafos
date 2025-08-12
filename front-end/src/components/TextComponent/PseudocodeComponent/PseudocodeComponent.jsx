@@ -1,5 +1,5 @@
 import React from 'react'
-import './PseudocodeComponent.css'
+import '../TextComponent.css'
 import { useLocation } from 'react-router-dom';
 import pseudocodigos from '../../../mocks/pseudocodigos.json'
 
@@ -12,7 +12,7 @@ const PseudocodeComponent = ({routeName}) => {
     const selectedLine = "p" + selectedId.toString();
 
     return (
-      <div className='code_body_text'>
+      <div className='code_body_text_pseudocode'>
           {selectedPseudocodigo.content && selectedPseudocodigo.content.length > 0 &&
             Object.keys(selectedPseudocodigo.content[0])
               .sort((a, b) => {

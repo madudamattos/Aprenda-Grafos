@@ -28,7 +28,9 @@ const Body = () => {
   } = useGraphManager();
 
   const routeName = location.pathname.replace('/', '');
-
+  
+  const [activeTab, setActiveTab] = React.useState('pseudocode'); // 'pseudocode' ou 'explanation'
+  
   return (
     <section className='container_body'>
       <div className='main_div_body'>
@@ -56,8 +58,8 @@ const Body = () => {
             </div>
         </div>
         <div className='right_side'>
-          <ButtonContainer2 name_1={"Pseudocódigo"} name_2={"Explicação"}/>
-          <TextComponent routeName={routeName}/>
+          <ButtonContainer2 onTabChange={setActiveTab} activeTab={activeTab}/>
+          <TextComponent routeName={routeName} activeTab={activeTab}/>
         </div>
       </div>
     </section>
