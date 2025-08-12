@@ -1,85 +1,99 @@
 class Graph {
   constructor() {
     console.log('Graph constructor called'); // Debug log
-    this.nodes = new Map(); // Map para armazenar nós: id -> {id, x, y, connections}
+    this.nodes = new Map(); // id -> { id, x, y, weight }
+    this.edges = new Map(); // id -> { id, from, to, weight, directed }
     this.nextNodeId = 1;
+    this.nextEdgeId = 1;
     this.maxNodeId = 11;
-    this.adjacencyList = new Map(); // Lista de adjacência: id -> Set de ids conectados
-    console.log('Graph initialized:', { nodes: this.nodes, adjacencyList: this.adjacencyList }); // Debug log
+    console.log('Graph initialized:', { nodes: this.nodes, edges: this.edges }); // Debug log
   }
 
   // Adiciona um novo nó na posição especificada
   addNode(x, y) {
     // se atingiu o numero máximo de nós, retorna null;
-    if(this.nextNodeId === this.maxNodeId) return null;
+    if (this.nextNodeId === this.maxNodeId) return null;
 
     const nodeId = this.nextNodeId;
-    const node = {
-      id: nodeId,
-      x: x,
-      y: y,
-      connections: new Set()
-    };
+    const node = { id: nodeId, x, y, weight: null };
 
     this.nodes.set(nodeId, node);
-    this.adjacencyList.set(nodeId, new Set());
     this.nextNodeId++;
 
     console.log(`Node ${nodeId} added at (${x}, ${y})`); // Debug log
     return node;
   }
 
-  // Remove um nó e todas suas conexões
+  // Remove um nó e todas as arestas incidentes
   removeNode(nodeId) {
     if (!this.nodes.has(nodeId)) return false;
-
-    // Remove todas as conexões com este nó
-    const node = this.nodes.get(nodeId);
-    node.connections.forEach(connectedId => {
-      const connectedNode = this.nodes.get(connectedId);
-      if (connectedNode) {
-        connectedNode.connections.delete(nodeId);
-        this.adjacencyList.get(connectedId).delete(nodeId);
-      }
-    });
-
-    // Remove o nó
     this.nodes.delete(nodeId);
-    this.adjacencyList.delete(nodeId);
-
+    // Remove arestas que saem ou chegam neste nó
+    for (const [edgeId, edge] of Array.from(this.edges.entries())) {
+      if (edge.from === nodeId || edge.to === nodeId) {
+        this.edges.delete(edgeId);
+      }
+    }
     return true;
   }
 
-  // Conecta dois nós (adiciona uma aresta)
-  connectNodes(nodeId1, nodeId2) {
-    if (nodeId1 === nodeId2) return false; // Não permite auto-conexão
-    if (!this.nodes.has(nodeId1) || !this.nodes.has(nodeId2)) return false;
-    
-    const node1 = this.nodes.get(nodeId1);
-    const node2 = this.nodes.get(nodeId2);
+  // Adiciona uma aresta
+  addEdge(from, to, { weight = null, directed = true } = {}) {
+    if (from === to) return null; // não permite laços
+    if (!this.nodes.has(from) || !this.nodes.has(to)) return null;
+    // Regras de unicidade:
+    // - Se for direcionada: não pode existir outra aresta do mesmo sentido; e não pode existir uma aresta não-direcionada entre o par
+    // - Se for não-direcionada: não pode existir nenhuma aresta entre o par (qualquer direção ou não-direcionada)
+    if (directed) {
+      if (this.hasEdgeFromTo(from, to)) return null;
+      if (this.hasUndirectedEdgeBetween(from, to)) return null;
+    } else {
+      if (this.hasAnyEdgeBetween(from, to)) return null;
+    }
 
-    node1.connections.add(nodeId2);
-    node2.connections.add(nodeId1);
+    const edgeId = this.nextEdgeId++;
+    const edge = { id: edgeId, from, to, weight, directed };
+    this.edges.set(edgeId, edge);
+    return edge;
+  }
 
-    this.adjacencyList.get(nodeId1).add(nodeId2);
-    this.adjacencyList.get(nodeId2).add(nodeId1);
-
+  // Remove uma aresta por id
+  removeEdge(edgeId) {
+    if (!this.edges.has(edgeId)) return false;
+    this.edges.delete(edgeId);
     return true;
   }
 
-  // Desconecta dois nós (remove uma aresta)
-  disconnectNodes(nodeId1, nodeId2) {
-    if (!this.nodes.has(nodeId1) || !this.nodes.has(nodeId2)) return false;
+  // Atualiza posição do nó
+  updateNodePosition(nodeId, x, y) {
+    const node = this.nodes.get(nodeId);
+    if (!node) return false;
+    node.x = x;
+    node.y = y;
+    return true;
+  }
 
-    const node1 = this.nodes.get(nodeId1);
-    const node2 = this.nodes.get(nodeId2);
+  // Define peso do nó
+  setNodeWeight(nodeId, weight) {
+    const node = this.nodes.get(nodeId);
+    if (!node) return false;
+    node.weight = weight;
+    return true;
+  }
 
-    node1.connections.delete(nodeId2);
-    node2.connections.delete(nodeId1);
+  // Define peso da aresta
+  setEdgeWeight(edgeId, weight) {
+    const edge = this.edges.get(edgeId);
+    if (!edge) return false;
+    edge.weight = weight;
+    return true;
+  }
 
-    this.adjacencyList.get(nodeId1).delete(nodeId2);
-    this.adjacencyList.get(nodeId2).delete(nodeId1);
-
+  // Define direção da aresta (true = direcionada, false = não direcionada)
+  setEdgeDirected(edgeId, directed) {
+    const edge = this.edges.get(edgeId);
+    if (!edge) return false;
+    edge.directed = directed;
     return true;
   }
 
@@ -88,31 +102,92 @@ class Graph {
     return Array.from(this.nodes.values());
   }
 
+  // Obtém todas as arestas
+  getAllEdges() {
+    return Array.from(this.edges.values());
+  }
+
   // Obtém um nó específico
   getNode(nodeId) {
     return this.nodes.get(nodeId);
   }
 
-  // Obtém a lista de adjacência completa
-  getAdjacencyList() {
-    return this.adjacencyList;
+  // Obtém aresta por id
+  getEdge(edgeId) {
+    return this.edges.get(edgeId);
   }
 
-  // Obtém os vizinhos de um nó
+  // Obtém os vizinhos de um nó (saídas), considerando direção
   getNeighbors(nodeId) {
-    return Array.from(this.adjacencyList.get(nodeId) || []);
+    const neighbors = [];
+    for (const edge of this.edges.values()) {
+      if (edge.directed) {
+        if (edge.from === nodeId) neighbors.push(edge.to);
+      } else {
+        if (edge.from === nodeId) neighbors.push(edge.to);
+        if (edge.to === nodeId) neighbors.push(edge.from);
+      }
+    }
+    return neighbors;
   }
 
-  // Verifica se dois nós estão conectados
+  // Verifica se dois nós estão conectados (há alguma aresta entre eles)
   areConnected(nodeId1, nodeId2) {
-    return this.adjacencyList.get(nodeId1)?.has(nodeId2) || false;
+    for (const edge of this.edges.values()) {
+      if (edge.directed) {
+        if (edge.from === nodeId1 && edge.to === nodeId2) return true;
+      } else {
+        if (
+          (edge.from === nodeId1 && edge.to === nodeId2) ||
+          (edge.from === nodeId2 && edge.to === nodeId1)
+        ) return true;
+      }
+    }
+    return false;
+  }
+
+  // Existe alguma aresta entre os nós (qualquer direção ou não-direcionada)
+  hasAnyEdgeBetween(nodeId1, nodeId2) {
+    for (const edge of this.edges.values()) {
+      if (
+        (edge.from === nodeId1 && edge.to === nodeId2) ||
+        (edge.from === nodeId2 && edge.to === nodeId1) ||
+        (!edge.directed && (
+          (edge.from === nodeId1 && edge.to === nodeId2) ||
+          (edge.from === nodeId2 && edge.to === nodeId1)
+        ))
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Existe aresta exatamente do nó A para o nó B
+  hasEdgeFromTo(from, to) {
+    for (const edge of this.edges.values()) {
+      if (edge.from === from && edge.to === to) return true;
+    }
+    return false;
+  }
+
+  // Existe aresta não-direcionada entre A e B
+  hasUndirectedEdgeBetween(a, b) {
+    for (const edge of this.edges.values()) {
+      if (!edge.directed && (
+        (edge.from === a && edge.to === b) ||
+        (edge.from === b && edge.to === a)
+      )) return true;
+    }
+    return false;
   }
 
   // Limpa todo o grafo
   clear() {
     this.nodes.clear();
-    this.adjacencyList.clear();
+    this.edges.clear();
     this.nextNodeId = 1;
+    this.nextEdgeId = 1;
   }
 
   // Obtém o número de nós
@@ -122,59 +197,69 @@ class Graph {
 
   // Obtém o número de arestas
   getEdgeCount() {
-    let count = 0;
-    for (const connections of this.adjacencyList.values()) {
-      count += connections.size;
-    }
-    return count / 2; 
+    return this.edges.size;
   }
 
   // Exporta o grafo como JSON
-  exportToJSON() {
+  exportToJSON() { 
     const nodes = Array.from(this.nodes.values()).map(node => ({
       id: node.id,
       x: node.x,
-      y: node.y
+      y: node.y,
+      weight: node.weight,
     }));
 
-    const edges = [];
-    for (const [nodeId, connections] of this.adjacencyList.entries()) {
-      for (const connectedId of connections) {
-        if (nodeId < connectedId) { // Evita duplicatas
-          edges.push([nodeId, connectedId]);
-        }
-      }
-    }
+    const edges = Array.from(this.edges.values()).map(edge => ({
+      id: edge.id,
+      from: edge.from,
+      to: edge.to,
+      weight: edge.weight,
+      directed: edge.directed,
+    }));
 
     return {
       nodes,
       edges,
-      nextNodeId: this.nextNodeId
+      nextNodeId: this.nextNodeId,
+      nextEdgeId: this.nextEdgeId,
     };
   }
 
   // Importa grafo de JSON
   importFromJSON(data) {
     this.clear();
-    
+
     // Adiciona nós
-    data.nodes.forEach(nodeData => {
+    (data.nodes || []).forEach(nodeData => {
       const node = {
         id: nodeData.id,
         x: nodeData.x,
         y: nodeData.y,
-        connections: new Set()
+        weight: nodeData.weight ?? null,
       };
       this.nodes.set(nodeData.id, node);
-      this.adjacencyList.set(nodeData.id, new Set());
     });
 
-    // Adiciona arestas
-    data.edges.forEach(([nodeId1, nodeId2]) => {
-      this.connectNodes(nodeId1, nodeId2);
+    // Adiciona arestas (compatível com formato antigo [[a,b], ...] e novo [{from,to,...}, ...])
+    (data.edges || []).forEach(edgeData => {
+      if (Array.isArray(edgeData)) {
+        const [from, to] = edgeData;
+        const edge = { id: this.nextEdgeId++, from, to, weight: null, directed: false };
+        this.edges.set(edge.id, edge);
+      } else if (edgeData && typeof edgeData === 'object') {
+        const edge = {
+          id: edgeData.id ?? this.nextEdgeId++,
+          from: edgeData.from,
+          to: edgeData.to,
+          weight: edgeData.weight ?? null,
+          directed: edgeData.directed !== false,
+        };
+        this.edges.set(edge.id, edge);
+      }
     });
 
-    this.nextNodeId = data.nextNodeId || this.nodes.size + 1;
+    this.nextNodeId = data.nextNodeId || (this.nodes.size + 1);
+    this.nextEdgeId = data.nextEdgeId || (this.edges.size + 1);
   }
 }
 
