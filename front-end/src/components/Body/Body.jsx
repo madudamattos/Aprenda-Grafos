@@ -27,6 +27,7 @@ const Body = () => {
     handleClearGraph,
     handleSaveGraph,
     handleLoadGraph,
+    loadGraphFromPath,
     renderEdges,
     hideContextMenu,
     deleteNode,
@@ -48,7 +49,7 @@ const Body = () => {
     <section className='container_body'>
       <div className='main_div_body'>
         <div className='left_side'>
-            <ButtonContainer1 activeTab={activeTab} f1={handleLoadGraph} f2={handleSaveGraph} f3={handleClearGraph}/>
+            <ButtonContainer1 activeTab={activeTab} f1={loadGraphFromPath} f2={handleLoadGraph} f3={handleSaveGraph} f4={handleClearGraph}/>
             <div className='canvas_body'>
                 <div className='canva' ref={canvasRef} onDoubleClick={handleCanvasDoubleClick} onContextMenu={(e) => { e.preventDefault(); hideContextMenu(); }}>
                   {renderEdges()}
@@ -86,13 +87,12 @@ const Body = () => {
           {contextMenu.type === 'node' && (
             <>
               <button onClick={deleteNode}>Deletar nó</button>
-              <button onClick={() => startEditNodeWeight(contextMenu.targetId)}>Editar peso do nó</button>
             </>
           )}
           {contextMenu.type === 'edge' && (
             <>
               <button onClick={deleteEdge}>Deletar aresta</button>
-              <button onClick={toggleEdgeDirected}>Alternar direção (direcionada/não)</button>
+              <button onClick={toggleEdgeDirected}>Alternar direcionamento (direcionada/não)</button>
             </>
           )}
         </div>

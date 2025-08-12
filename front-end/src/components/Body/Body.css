@@ -55,7 +55,7 @@
 .graph-edge.directed::after {
     content: '';
     position: absolute;
-    right: -6px;
+    right: -3px;
     top: 50%;
     transform: translateY(-50%) rotate(0deg);
     border-width: 6px 0 6px 10px;
@@ -85,7 +85,7 @@
     overflow: hidden;
 }
 
-.context-menu button {
+.context-menu button{
     display: block;
     width: 100%;
     padding: 10px 12px;
