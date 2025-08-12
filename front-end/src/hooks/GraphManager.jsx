@@ -8,8 +8,6 @@ export const useGraphManager = () => {
   const [nodes, setNodes] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, type: null, targetId: null });
-  const [dragging, setDragging] = useState({ isDragging: false, nodeId: null, offsetX: 0, offsetY: 0 });
-  const dragRafRef = useRef(null);
   const [editingNodeId, setEditingNodeId] = useState(null);
   const [editingEdgeId, setEditingEdgeId] = useState(null);
   const canvasRef = useRef(null);
@@ -32,8 +30,10 @@ export const useGraphManager = () => {
     // Adiciona o novo nó
     const newNode = graph.addNode(x, y);
     updateNodesState();
-    
-    console.log(`Nó ${newNode.id} criado na posição (${x}, ${y})`);
+
+    setEditingNodeId(newNode.id);
+
+    // console.log(`Nó ${newNode.id} criado na posição (${x}, ${y})`);
   };
 
   // Manipula clique em um nó
@@ -41,21 +41,23 @@ export const useGraphManager = () => {
     hideContextMenu();
     if (selectedNode === null) {
       setSelectedNode(nodeId);
-      console.log(`Nó ${nodeId} selecionado`);
+      // console.log(`Nó ${nodeId} selecionado`);
     } else if (selectedNode === nodeId) {
       setSelectedNode(null);
-      console.log(`Nó ${nodeId} deselecionado`);
+      // console.log(`Nó ${nodeId} deselecionado`);
     } else {
       // Conecta criando aresta direcionada selectedNode -> nodeId
-      const weightStr = window.prompt('Peso da aresta (opcional):');
-      const weight = weightStr === null || weightStr.trim() === '' ? null : Number(weightStr);
-      const edge = graph.addEdge(selectedNode, nodeId, { weight, directed: true });
+      const edge = graph.addEdge(selectedNode, nodeId, { weight: null, directed: true });
       if (edge) {
-        console.log(`Aresta criada: ${edge.from} -> ${edge.to} (peso: ${edge.weight ?? '—'})`);
         updateNodesState();
       } else {
         console.log(`Falha ao conectar nós ${selectedNode} -> ${nodeId} (pode já existir uma aresta)`);
       }
+
+      // Após criar a aresta, adiciona o peso
+      setEditingEdgeId(edge.id);
+
+      //deseleciona o nó
       setSelectedNode(null);
     }
   };
@@ -82,44 +84,6 @@ export const useGraphManager = () => {
     setEditingNodeId(null);
   };
 
-  // Arrastar nó: iniciar
-  const handleNodeMouseDown = (nodeId, mouseEvent) => {
-    hideContextMenu();
-    if (!canvasRef.current) return;
-    mouseEvent.stopPropagation();
-    const rect = canvasRef.current.getBoundingClientRect();
-    const node = graph.getNode(nodeId);
-    if (!node) return;
-    const mouseX = mouseEvent.clientX - rect.left;
-    const mouseY = mouseEvent.clientY - rect.top;
-    setDragging({ isDragging: true, nodeId, offsetX: mouseX - node.x, offsetY: mouseY - node.y });
-  };
-
-  const onMouseMove = useCallback((e) => {
-    if (!dragging.isDragging || dragging.nodeId == null || !canvasRef.current) return;
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left - dragging.offsetX;
-    const y = e.clientY - rect.top - dragging.offsetY;
-    graph.updateNodePosition(dragging.nodeId, x, y);
-    // Volta ao comportamento anterior: re-render imediato, sem rAF
-    updateNodesState();
-  }, [dragging, graph]);
-
-  const onMouseUp = useCallback(() => {
-    if (dragging.isDragging) {
-      setDragging({ isDragging: false, nodeId: null, offsetX: 0, offsetY: 0 });
-    }
-  }, [dragging]);
-
-  useEffect(() => {
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-      if (dragRafRef.current) cancelAnimationFrame(dragRafRef.current);
-    };
-  }, [onMouseMove, onMouseUp]);
 
   // Limpa o grafo
   const handleClearGraph = () => {
@@ -167,6 +131,20 @@ export const useGraphManager = () => {
       }
     };
     input.click();
+  };
+
+  const loadGraphFromPath = async (path) => {
+    try {
+      const response = await fetch(path);
+      if (!response.ok) throw new Error('Erro ao buscar o arquivo');
+      const graphData = await response.json();
+      graph.importFromJSON(graphData);
+      updateNodesState();
+      setSelectedNode(null);
+      console.log('Grafo carregado de', path);
+    } catch (error) {
+      console.error('Erro ao carregar grafo:', error);
+    }
   };
 
   // Double click na aresta: editar peso
@@ -245,7 +223,7 @@ export const useGraphManager = () => {
       const y2 = to.y;
       const dx = x2 - x1;
       const dy = y2 - y1;
-      const length = Math.sqrt(dx * dx + dy * dy);
+      const length = Math.sqrt(dx * dx + dy * dy);0
       const angleRad = Math.atan2(dy, dx);
       const angle = angleRad * 180 / Math.PI;
 
@@ -320,12 +298,12 @@ export const useGraphManager = () => {
     handleCanvasDoubleClick,
     handleNodeClick,
     handleNodeDoubleClick,
-    handleNodeMouseDown,
     handleNodeContextMenu,
     handleEdgeContextMenu,
     handleClearGraph,
     handleSaveGraph,
     handleLoadGraph,
+    loadGraphFromPath,
     renderEdges,
     hideContextMenu,
     deleteNode,

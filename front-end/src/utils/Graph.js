@@ -5,14 +5,15 @@ class Graph {
     this.edges = new Map(); // id -> { id, from, to, weight, directed }
     this.nextNodeId = 1;
     this.nextEdgeId = 1;
-    this.maxNodeId = 11;
-    console.log('Graph initialized:', { nodes: this.nodes, edges: this.edges }); // Debug log
+    this.maxNodeCount = 8;
+    this.nodeCount = this.nodes.size;
+    // console.log('Graph initialized:', { nodes: this.nodes, edges: this.edges }); // Debug log
   }
 
   // Adiciona um novo nó na posição especificada
   addNode(x, y) {
     // se atingiu o numero máximo de nós, retorna null;
-    if (this.nextNodeId === this.maxNodeId) return null;
+    if (this.nodes.size >= this.maxNodeCount) return null;
 
     const nodeId = this.nextNodeId;
     const node = { id: nodeId, x, y, weight: null };
@@ -20,7 +21,7 @@ class Graph {
     this.nodes.set(nodeId, node);
     this.nextNodeId++;
 
-    console.log(`Node ${nodeId} added at (${x}, ${y})`); // Debug log
+    // console.log(`Node ${nodeId} added at (${x}, ${y})`); // Debug log
     return node;
   }
 
@@ -28,7 +29,7 @@ class Graph {
   removeNode(nodeId) {
     if (!this.nodes.has(nodeId)) return false;
     this.nodes.delete(nodeId);
-    // Remove arestas que saem ou chegam neste nó
+    // Remove arestas que saem ou chegam no nó
     for (const [edgeId, edge] of Array.from(this.edges.entries())) {
       if (edge.from === nodeId || edge.to === nodeId) {
         this.edges.delete(edgeId);
@@ -39,7 +40,7 @@ class Graph {
 
   // Adiciona uma aresta
   addEdge(from, to, { weight = null, directed = true } = {}) {
-    if (from === to) return null; // não permite laços
+    if (from === to) return null; // não permite autolaço
     if (!this.nodes.has(from) || !this.nodes.has(to)) return null;
     // Regras de unicidade:
     // - Se for direcionada: não pode existir outra aresta do mesmo sentido; e não pode existir uma aresta não-direcionada entre o par
@@ -93,7 +94,24 @@ class Graph {
   setEdgeDirected(edgeId, directed) {
     const edge = this.edges.get(edgeId);
     if (!edge) return false;
-    edge.directed = directed;
+    // Se alternar para não-direcionada, remova qualquer outra aresta entre o par
+    if (!directed) {
+      for (const [otherId, otherEdge] of this.edges.entries()) {
+        if (
+          otherId !== edgeId &&
+          (
+            (otherEdge.from === edge.from && otherEdge.to === edge.to) ||
+            (otherEdge.from === edge.to && otherEdge.to === edge.from)
+          )
+        ) {
+          this.edges.delete(otherId);
+        }
+      }
+      edge.directed = false;
+    } else {
+      // Se alternar para direcionada, apenas marca como direcionada
+      edge.directed = true;
+    }
     return true;
   }
 

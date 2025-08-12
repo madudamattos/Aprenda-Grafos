@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "x": 255,
+      "y": 185,
+      "weight": null
+    },
+    {
+      "id": 2,
+      "x": 518,
+      "y": 108,
+      "weight": null
+    },
+    {
+      "id": 3,
+      "x": 635,
+      "y": 265,
+      "weight": null
+    },
+    {
+      "id": 4,
+      "x": 422,
+      "y": 332,
+      "weight": null
+    }
+  ],
+  "edges": [
+    {
+      "id": 1,
+      "from": 3,
+      "to": 2,
+      "weight": null,
+      "directed": true
+    },
+    {
+      "id": 2,
+      "from": 1,
+      "to": 2,
+      "weight": null,
+      "directed": true
+    },
+    {
+      "id": 3,
+      "from": 4,
+      "to": 3,
+      "weight": null,
+      "directed": true
+    },
+    {
+      "id": 4,
+      "from": 4,
+      "to": 1,
+      "weight": null,
+      "directed": true
+    }
+  ],
+  "nextNodeId": 5,
+  "nextEdgeId": 5
+}
