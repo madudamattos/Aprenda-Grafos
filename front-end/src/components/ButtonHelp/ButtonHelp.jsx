@@ -5,7 +5,7 @@ const ButtonHelp = () => {
   return (
     <>
     <button className='button_help'>
-        <img className='button_help_icon' src="/src/assets/icons/question.svg" alt='help'/>
+        <img className='button_help_icon' src="/icons/question.svg" alt='help'/>
     </button>
     </>
 
