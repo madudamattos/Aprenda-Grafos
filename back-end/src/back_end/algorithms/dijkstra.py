@@ -6,7 +6,7 @@ from back_end.algorithms.algorithm import Algorithm
 
 
 class Dijkstra(Algorithm):
-    def __init__(self, graph: nx.DiGraph, source: str, target: str):
+    def __init__(self, graph: nx.DiGraph, source: int, target: int):
         super().__init__(graph)
         self.priority_queue = []
         self.current_node = None
