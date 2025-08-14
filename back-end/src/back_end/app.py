@@ -4,7 +4,8 @@ import pickle
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 
-from back_end.algorithms import BFS
+from back_end.algorithms.algorithm import Algorithm
+from back_end.algorithms.bfs import BFS
 from back_end.graph_parser import GraphParser
 
 app = Flask(__name__)
@@ -22,7 +23,7 @@ def grafo():
             source = data.get('source')
             if not source:
                 return jsonify({"error": "Source node is required for BFS"}), 400
-            session['algorithm'] = pickle.dumps(BFS.BFS(graph, source))
+            session['algorithm'] = pickle.dumps(BFS(graph, source))
             return jsonify({"message": "Algorithm initialized"}), 200
         case _:
             return jsonify({"error": "Unsupported algorithm"}), 400
@@ -35,7 +36,7 @@ def step():
         return jsonify({"error": "No algorithm initialized"}), 400
 
     try:
-        algorithm = pickle.loads(algorithm)
+        algorithm: Algorithm = pickle.loads(algorithm)
         is_executing = algorithm.next_step()
         session['algorithm'] = pickle.dumps(algorithm)
 
