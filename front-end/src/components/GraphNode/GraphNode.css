@@ -32,7 +32,7 @@
 }
 
 .graph-node.unvisited{
-    background-color: var(--yellow);
+    background-color: var(--grey);
 }
 
 .node-number {

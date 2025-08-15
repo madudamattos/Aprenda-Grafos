@@ -1,7 +1,8 @@
 import React from 'react'
 import './GraphNode.css'
+import { NodeState } from '../../utils/Graph';
 
-const GraphNode = ({ id, x, y, weight, onClick, onDoubleClick, onMouseDown, onContextMenu, isSelected = false, isEditing = false, onCommitWeight, onCancelEdit }) => {
+const GraphNode = ({ id, x, y, weight, state = NodeState.DEFAULT, onClick, onDoubleClick, onMouseDown, onContextMenu, isEditing = false, onCommitWeight, onCancelEdit }) => {
   const handleClick = (e) => {
     e.stopPropagation();
     if (onClick) onClick(id);
@@ -21,9 +22,13 @@ const GraphNode = ({ id, x, y, weight, onClick, onDoubleClick, onMouseDown, onCo
     if (onContextMenu) onContextMenu(id, e);
   };
 
+  // Define a classe do nó de acordo com o estado
+  const stateClass = Object.values(NodeState).includes(state) && state !== NodeState.DEFAULT ? state : '';
+  const className = `graph-node${stateClass ? ' ' + stateClass : ''}`;
+
   return (
     <div 
-      className={`graph-node ${isSelected ? 'selected' : ''}`}
+      className={className}
       style={{
         left: `${x}px`,
         top: `${y}px`

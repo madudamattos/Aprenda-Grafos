@@ -1,0 +1,54 @@
+{
+  "current_node": null,
+  "finished": false,
+  "graph": {
+    "edges": [
+      {
+        "directed": false,
+        "from": 0,
+        "id": 0,
+        "to": 2,
+        "weight": null
+      },
+      {
+        "directed": false,
+        "from": 0,
+        "id": 1,
+        "to": 1,
+        "weight": null
+      }
+    ],
+    "nodes": [
+      {
+        "id": 0,
+        "state": "unvisited",
+        "weight": null,
+        "x": 405,
+        "y": 74
+      },
+      {
+        "id": 1,
+        "state": "unvisited",
+        "weight": null,
+        "x": 245,
+        "y": 226
+      },
+      {
+        "id": 2,
+        "state": "unvisited",
+        "weight": null,
+        "x": 584,
+        "y": 237
+      }
+    ]
+  },
+  "step": 0
+}
+
+Eu fiz uma mudança no meu código mas não está totalmente funcional: Antes, a verificação de nó selecionado, foi feita de forma a definir uma variável com useState para guardar o valor do nó selecionado. Contudo, eu adicionei em graph.js uma propriedade aos nós, de forma que eles armazenam um atributo "state", então esse estado pode ser uma das opções do enum export const NodeState = {
+  DEFAULT: 'default',
+  UNVISITED: 'unvisited',
+  VISITED: 'visited',
+  VISITING: 'visiting',
+  SELECTED: 'selected',
+}; sendo assim quando o nó for selecionado ele vai mudar seu estado para selecionado. E quando ele for "deselecionado", o estado dele volta para default.  Você pode fazer essas mudanças para mim no graphManager? Eu mudei algumas coisas mas não está totalmente funcional ainda

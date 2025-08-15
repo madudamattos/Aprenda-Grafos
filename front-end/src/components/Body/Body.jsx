@@ -73,6 +73,7 @@ const Body = () => {
                       x={node.x}
                       y={node.y}
                       weight={node.weight}
+                      state={node.state}
                       onClick={handleNodeClick}
                       onDoubleClick={handleNodeDoubleClick}
                       onMouseDown={handleNodeMouseDown}
@@ -80,7 +81,6 @@ const Body = () => {
                       isEditing={editingNodeId === node.id}
                       onCommitWeight={commitNodeWeight}
                       onCancelEdit={cancelEditNodeWeight}
-                      isSelected={selectedNode === node.id}
                     />
                   ))}
                 </div>
