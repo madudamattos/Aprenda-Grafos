@@ -1,0 +1,38 @@
+{
+    "nodes": [
+        {
+            "x": 68,
+            "y": 409,
+            "weight": 1,
+            "id": 1
+        },
+        {
+            "x": 297,
+            "y": 396,
+            "weight": 4,
+            "id": 2
+        },
+        {
+            "x": 522,
+            "y": 402,
+            "weight": 4,
+            "id": 3
+        }
+    ],
+    "edges": [
+        {
+            "id": 1,
+            "from": 1,
+            "to": 2,
+            "weight": null,
+            "directed": false
+        },
+        {
+            "id": 2,
+            "from": 2,
+            "to": 3,
+            "weight": null,
+            "directed": true
+        }
+    ]
+}
