@@ -17,20 +17,7 @@ class Dijkstra(Algorithm):
         self.step = self._next_step
 
         if self._next_step == 1:
-            self.shortest_path = []
-
-            for _u, _v, data in self.current_graph.edges(data=True):
-                if data.get('weight', 1) < 0:
-                    raise ValueError("Graph contains negative weight edge, which is not allowed in Dijkstra's algorithm.")
-
-            for node in self.current_graph.nodes:
-                self.current_graph.nodes[node]['distance'] = float('inf')
-                self.current_graph.nodes[node]['parent'] = None
-                self.current_graph.nodes[node]['state'] = 'unvisited'
-
-            heapq.heappush(self.priority_queue, (0, self.source))
-            self.current_graph.nodes[self.source]['distance'] = 0
-            self.current_graph.nodes[self.source]['state'] = 'visiting'
+            self.setup_algorithm()
             self._next_step += 1
             return True
 
@@ -68,6 +55,22 @@ class Dijkstra(Algorithm):
             return True
 
         raise RuntimeError("Invalid step in Dijkstra algorithm.")
+
+    def setup_algorithm(self):
+        self.shortest_path = []
+
+        for _u, _v, data in self.current_graph.edges(data=True):
+            if data.get('weight', 1) < 0:
+                raise ValueError("Graph contains negative weight edge, which is not allowed in Dijkstra's algorithm.")
+
+        for node in self.current_graph.nodes:
+            self.current_graph.nodes[node]['distance'] = float('inf')
+            self.current_graph.nodes[node]['parent'] = None
+            self.current_graph.nodes[node]['state'] = 'unvisited'
+
+        heapq.heappush(self.priority_queue, (0, self.source))
+        self.current_graph.nodes[self.source]['distance'] = 0
+        self.current_graph.nodes[self.source]['state'] = 'visiting'
 
     def build_shortest_path(self, current_node: str):
         self.shortest_path = []
