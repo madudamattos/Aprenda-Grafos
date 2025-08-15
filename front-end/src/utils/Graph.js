@@ -1,13 +1,23 @@
+export const NodeState = {
+  DEFAULT: 'default',
+  UNVISITED: 'unvisited',
+  VISITED: 'visited',
+  VISITING: 'visiting',
+  SELECTED: 'selected',
+};
+
 class Graph {
   constructor() {
     console.log('Graph constructor called'); // Debug log
     this.nodes = new Map(); // id -> { id, x, y, weight }
     this.edges = new Map(); // id -> { id, from, to, weight, directed }
-    this.nextNodeId = 1;
-    this.nextEdgeId = 1;
-    this.maxNodeCount = 8;
+    this.maxNodeCount = 10;
     this.nodeCount = this.nodes.size;
-    // console.log('Graph initialized:', { nodes: this.nodes, edges: this.edges }); // Debug log
+
+    // variaveis para controle da animação
+    this.currentNode = null;
+    this.finished = false;
+    this.step = 0;
   }
 
   // Adiciona um novo nó na posição especificada
@@ -15,14 +25,12 @@ class Graph {
     // se atingiu o numero máximo de nós, retorna null;
     if (this.nodes.size >= this.maxNodeCount) return null;
 
-    const nodeId = this.nextNodeId;
-    const node = { id: nodeId, x, y, weight: null };
-
+    // Calcula o próximo id como o maior id existente + 1, ou 0 se não houver nós
+    const nodeId = this.nodes.size === 0 ? 1 : Math.max(...this.nodes.keys()) + 1;
+    const node = { id: nodeId, x, y, weight: null, state: NodeState.DEFAULT};
     this.nodes.set(nodeId, node);
-    this.nextNodeId++;
-
-    // console.log(`Node ${nodeId} added at (${x}, ${y})`); // Debug log
-    return node;
+  // console.log(`Node ${nodeId} added at (${x}, ${y})`); // Debug log
+  return node;
   }
 
   // Remove um nó e todas as arestas incidentes
@@ -52,10 +60,11 @@ class Graph {
       if (this.hasAnyEdgeBetween(from, to)) return null;
     }
 
-    const edgeId = this.nextEdgeId++;
-    const edge = { id: edgeId, from, to, weight, directed };
-    this.edges.set(edgeId, edge);
-    return edge;
+  // Calcula o próximo id como o maior id existente + 1, ou 0 se não houver arestas
+  const edgeId = this.edges.size === 0 ? 0 : Math.max(...this.edges.keys()) + 1;
+  const edge = { id: edgeId, from, to, weight, directed };
+  this.edges.set(edgeId, edge);
+  return edge;
   }
 
   // Remove uma aresta por id
@@ -88,6 +97,11 @@ class Graph {
     if (!edge) return false;
     edge.weight = weight;
     return true;
+  }
+
+  // muda o nó atual
+  setCurrentNode(nodeId) {
+    this.currentNode = nodeId;
   }
 
   // Define direção da aresta (true = direcionada, false = não direcionada)
@@ -204,8 +218,8 @@ class Graph {
   clear() {
     this.nodes.clear();
     this.edges.clear();
-    this.nextNodeId = 1;
-    this.nextEdgeId = 1;
+  // Não usamos mais nextNodeId
+  // Não usamos mais nextEdgeId
   }
 
   // Obtém o número de nós
@@ -218,66 +232,70 @@ class Graph {
     return this.edges.size;
   }
 
-  // Exporta o grafo como JSON
-  exportToJSON() { 
+  setNodeState(nodeId, state) {
+    const node = this.getNode(nodeId);
+    if (node) {
+      node.state = state;
+    }
+  }
+
+  exportToJSON() {
     const nodes = Array.from(this.nodes.values()).map(node => ({
       id: node.id,
-      x: node.x,
-      y: node.y,
+      state: node.state || NodeState.DEFAULT,
       weight: node.weight,
+      x: node.x,
+      y: node.y
     }));
 
     const edges = Array.from(this.edges.values()).map(edge => ({
-      id: edge.id,
-      from: edge.from,
-      to: edge.to,
-      weight: edge.weight,
       directed: edge.directed,
+      from: edge.from,
+      id: edge.id,
+      to: edge.to,
+      weight: edge.weight
     }));
 
     return {
-      nodes,
-      edges,
-      nextNodeId: this.nextNodeId,
-      nextEdgeId: this.nextEdgeId,
+      current_node: this.currentNode ?? null,
+      finished: this.finished ?? false,
+      graph: {
+        edges,
+        nodes
+      },
+      step: this.step ?? 0
     };
   }
 
-  // Importa grafo de JSON
   importFromJSON(data) {
     this.clear();
-
+    const graphData = data.graph;
     // Adiciona nós
-    (data.nodes || []).forEach(nodeData => {
+    (graphData.nodes || []).forEach(nodeData => {
       const node = {
         id: nodeData.id,
+        state: nodeData.state,
+        weight: nodeData.weight,
         x: nodeData.x,
-        y: nodeData.y,
-        weight: nodeData.weight ?? null,
+        y: nodeData.y
       };
       this.nodes.set(nodeData.id, node);
     });
-
-    // Adiciona arestas (compatível com formato antigo [[a,b], ...] e novo [{from,to,...}, ...])
-    (data.edges || []).forEach(edgeData => {
-      if (Array.isArray(edgeData)) {
-        const [from, to] = edgeData;
-        const edge = { id: this.nextEdgeId++, from, to, weight: null, directed: false };
-        this.edges.set(edge.id, edge);
-      } else if (edgeData && typeof edgeData === 'object') {
-        const edge = {
-          id: edgeData.id ?? this.nextEdgeId++,
-          from: edgeData.from,
-          to: edgeData.to,
-          weight: edgeData.weight ?? null,
-          directed: edgeData.directed !== false,
-        };
-        this.edges.set(edge.id, edge);
-      }
+    // Adiciona arestas
+    (graphData.edges || []).forEach(edgeData => {
+      const edge = {
+        directed: edgeData.directed,
+        from: edgeData.from,
+        id: edgeData.id,
+        to: edgeData.to,
+        weight: edgeData.weight ?? null
+      };
+      this.edges.set(edge.id, edge);
     });
-
-    this.nextNodeId = data.nextNodeId || (this.nodes.size + 1);
-    this.nextEdgeId = data.nextEdgeId || (this.edges.size + 1);
+    // Atualiza currentNode, finished e step
+    this.currentNode = data.current_node ?? null;
+    this.finished = data.finished ?? false;
+    this.step = data.step ?? 0;
   }
 }
 

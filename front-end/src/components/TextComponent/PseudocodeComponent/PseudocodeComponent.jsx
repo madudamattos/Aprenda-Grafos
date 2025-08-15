@@ -3,7 +3,7 @@ import '../TextComponent.css'
 import { useLocation } from 'react-router-dom';
 import pseudocodigos from '../../../mocks/pseudocodigos.json'
 
-const PseudocodeComponent = ({routeName}) => {
+const PseudocodeComponent = ({routeName, step}) => {
     const location = useLocation();
     const selectedPseudocodigo = pseudocodigos.find(p => p.id === routeName);
 

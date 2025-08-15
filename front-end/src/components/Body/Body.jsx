@@ -10,6 +10,7 @@ import ButtonContainer2 from '../ButtonContainer2/ButtonContainer2'
 import ButtonContainer1 from '../ButtonContainer1/ButtonContainer1'
 import { useLocation } from 'react-router-dom';
 import TextComponent from '../TextComponent/TextComponent'
+import ContextMenu from '../ContextMenu/ContextMenu'
 
 const Body = () => {
   const {
@@ -44,7 +45,19 @@ const Body = () => {
   const routeName = location.pathname.replace('/', '');
   
   const [activeTab, setActiveTab] = React.useState('pseudocode'); // 'pseudocode' ou 'explanation'
-  
+  const [step, setStep] = React.useState(0);
+
+  function playAnimation() {
+    intervalId = setInterval(async () => {
+      const response = await fetch('http://localhost:5000/algoritmo/estado');
+      const data = await response.json();
+      loadGraphFromPath(data.graph);
+      if (data.finished) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
+  }
+
   return (
     <section className='container_body'>
       <div className='main_div_body'>
@@ -60,6 +73,7 @@ const Body = () => {
                       x={node.x}
                       y={node.y}
                       weight={node.weight}
+                      state={node.state}
                       onClick={handleNodeClick}
                       onDoubleClick={handleNodeDoubleClick}
                       onMouseDown={handleNodeMouseDown}
@@ -67,36 +81,30 @@ const Body = () => {
                       isEditing={editingNodeId === node.id}
                       onCommitWeight={commitNodeWeight}
                       onCancelEdit={cancelEditNodeWeight}
-                      isSelected={selectedNode === node.id}
                     />
                   ))}
                 </div>
                 <Tooltip>
                   <ButtonHelp className='button_help'></ButtonHelp>
                 </Tooltip>
-                <AnimationControl className='animation_control'/>
+                <AnimationControl onPlay={playAnimation} className='animation_control'/>
             </div>
         </div>
         <div className='right_side'>
           <ButtonContainer2 onTabChange={setActiveTab} activeTab={activeTab}/>
-          <TextComponent routeName={routeName} activeTab={activeTab}/>
+          <TextComponent routeName={routeName} activeTab={activeTab} step={step}/>
         </div>
       </div>
-      {contextMenu.visible && (
-        <div className='context-menu' style={{ left: contextMenu.x, top: contextMenu.y }} onMouseLeave={hideContextMenu}>
-          {contextMenu.type === 'node' && (
-            <>
-              <button onClick={deleteNode}>Deletar nó</button>
-            </>
-          )}
-          {contextMenu.type === 'edge' && (
-            <>
-              <button onClick={deleteEdge}>Deletar aresta</button>
-              <button onClick={toggleEdgeDirected}>Alternar direcionamento (direcionada/não)</button>
-            </>
-          )}
-        </div>
-      )}
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        type={contextMenu.type}
+        onDeleteNode={deleteNode}
+        onDeleteEdge={deleteEdge}
+        onToggleEdgeDirected={toggleEdgeDirected}
+        onMouseLeave={hideContextMenu}
+      />
     </section>
   )
 }

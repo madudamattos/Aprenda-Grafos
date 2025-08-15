@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Graph from '../utils/Graph';
+import { NodeState } from '../utils/Graph';
 
 export const useGraphManager = () => {
   console.log('useGraphManager hook initializing...'); // Debug log
@@ -10,9 +11,20 @@ export const useGraphManager = () => {
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, type: null, targetId: null });
   const [editingNodeId, setEditingNodeId] = useState(null);
   const [editingEdgeId, setEditingEdgeId] = useState(null);
+  
   const canvasRef = useRef(null);
 
-  console.log('useGraphManager hook initialized:', { graph, nodes, selectedNode }); // Debug log
+  const handleSelectNode = (nodeId) => {
+    if (selectedNode !== null) {
+      graph.setNodeState(selectedNode, NodeState.DEFAULT);
+    }
+    if (nodeId !== null) {
+      graph.setNodeState(nodeId, NodeState.SELECTED);
+    }
+
+    setSelectedNode(nodeId);
+    graph.setCurrentNode(nodeId);
+  };
 
   // Atualiza o estado dos nós quando o grafo muda
   const updateNodesState = () => {
@@ -40,14 +52,14 @@ export const useGraphManager = () => {
   const handleNodeClick = (nodeId) => {
     hideContextMenu();
     if (selectedNode === null) {
-      setSelectedNode(nodeId);
+      handleSelectNode(nodeId);
       // console.log(`Nó ${nodeId} selecionado`);
     } else if (selectedNode === nodeId) {
-      setSelectedNode(null);
+      handleSelectNode(null);
       // console.log(`Nó ${nodeId} deselecionado`);
     } else {
       // Conecta criando aresta direcionada selectedNode -> nodeId
-      const edge = graph.addEdge(selectedNode, nodeId, { weight: null, directed: true });
+      const edge = graph.addEdge(selectedNode, nodeId, { weight: null, directed: false });
       if (edge) {
         updateNodesState();
       } else {
@@ -58,7 +70,7 @@ export const useGraphManager = () => {
       setEditingEdgeId(edge.id);
 
       //deseleciona o nó
-      setSelectedNode(null);
+      handleSelectNode(null);
     }
   };
 
@@ -89,7 +101,7 @@ export const useGraphManager = () => {
   const handleClearGraph = () => {
     graph.clear();
     setNodes([]);
-    setSelectedNode(null);
+    handleSelectNode(null);
     console.log('Grafo limpo');
   };
 
@@ -121,7 +133,7 @@ export const useGraphManager = () => {
             const graphData = JSON.parse(event.target.result);
             graph.importFromJSON(graphData);
             updateNodesState();
-            setSelectedNode(null);
+            handleSelectNode(null);
             console.log('Grafo carregado');
           } catch (error) {
             console.error('Erro ao carregar grafo:', error);
@@ -140,7 +152,7 @@ export const useGraphManager = () => {
       const graphData = await response.json();
       graph.importFromJSON(graphData);
       updateNodesState();
-      setSelectedNode(null);
+      handleSelectNode(null);
       console.log('Grafo carregado de', path);
     } catch (error) {
       console.error('Erro ao carregar grafo:', error);
@@ -187,7 +199,7 @@ export const useGraphManager = () => {
     if (contextMenu.type !== 'node' || contextMenu.targetId == null) return;
     const nodeId = contextMenu.targetId;
     graph.removeNode(nodeId);
-    if (selectedNode === nodeId) setSelectedNode(null);
+    if (selectedNode === nodeId) handleSelectNode(null);
     updateNodesState();
     hideContextMenu();
   };

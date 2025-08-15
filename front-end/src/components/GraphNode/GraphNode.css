@@ -18,9 +18,21 @@
     transform: translate(-50%, -50%) scale(1.1);
 }
 
-.graph-node.selected {
+.graph-node.selected{
     background-color: #A3CEEF;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.graph-node.visited{
+    background-color: var(--brown);
+}
+
+.graph-node.visiting{
+    background-color: var(--orange);
+}
+
+.graph-node.unvisited{
+    background-color: var(--grey);
 }
 
 .node-number {
