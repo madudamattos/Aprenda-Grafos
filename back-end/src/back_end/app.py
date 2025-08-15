@@ -9,8 +9,11 @@ from back_end.algorithms.bfs import BFS
 from back_end.graph_parser import GraphParser
 
 app = Flask(__name__)
-CORS(app)
 app.secret_key = "secret key"  # TODO: Change this!
+
+# CORRIGIDO: CORS com credenciais
+CORS(app, supports_credentials=True, origins="http://localhost:5173")
+
 logging.basicConfig(level=logging.DEBUG)
 
 

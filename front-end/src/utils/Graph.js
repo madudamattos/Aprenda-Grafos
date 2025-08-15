@@ -242,32 +242,64 @@ class Graph {
   exportToJSON() {
     const nodes = Array.from(this.nodes.values()).map(node => ({
       id: node.id,
-      state: node.state || NodeState.DEFAULT,
-      weight: node.weight,
       x: node.x,
-      y: node.y
+      y: node.y,
+      weight: node.weight
     }));
 
     const edges = Array.from(this.edges.values()).map(edge => ({
-      directed: edge.directed,
-      from: edge.from,
       id: edge.id,
+      from: edge.from,
       to: edge.to,
-      weight: edge.weight
+      weight: edge.weight,
+      directed: edge.directed
     }));
 
+    const algorithm = "bfs";
+    const source = this.currentNode;
+
     return {
-      current_node: this.currentNode ?? null,
-      finished: this.finished ?? false,
-      graph: {
-        edges,
-        nodes
-      },
-      step: this.step ?? 0
+      nodes,
+      edges,
+      algorithm,
+      source
     };
   }
 
   importFromJSON(data) {
+    this.clear();
+    
+    // Adiciona nós
+    (data.nodes || []).forEach(nodeData => {
+      const node = {
+        id: nodeData.id,
+        state: NodeState.DEFAULT, // Estado padrão para nós importados
+        weight: nodeData.weight,
+        x: nodeData.x,
+        y: nodeData.y
+      };
+      this.nodes.set(nodeData.id, node);
+    });
+    
+    // Adiciona arestas
+    (data.edges || []).forEach(edgeData => {
+      const edge = {
+        directed: edgeData.directed,
+        from: edgeData.from,
+        id: edgeData.id,
+        to: edgeData.to,
+        weight: edgeData.weight ?? null
+      };
+      this.edges.set(edge.id, edge);
+    });
+    
+    // Reseta os campos de controle da animação
+    this.currentNode = null;
+    this.finished = false;
+    this.step = 0;
+  }
+
+  importFromJSONAPI(data) {
     this.clear();
     const graphData = data.graph;
     // Adiciona nós

@@ -11,8 +11,164 @@ export const useGraphManager = () => {
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, type: null, targetId: null });
   const [editingNodeId, setEditingNodeId] = useState(null);
   const [editingEdgeId, setEditingEdgeId] = useState(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const [step, setStep] = useState(0);
   
   const canvasRef = useRef(null);
+
+  // Função para iniciar o algoritmo no backend
+  const startAlgorithm = async (algorithm = 'bfs') => {
+    try {
+      // Garante que algorithm seja uma string válida
+      const algorithmName = typeof algorithm === 'string' ? algorithm : 'bfs';
+      
+      const graphData = graph.exportToJSON();
+      
+      // Garante que apenas dados primitivos sejam enviados
+      const cleanNodes = graphData.nodes.map(node => ({
+        id: Number(node.id),
+        x: Number(node.x),
+        y: Number(node.y),
+        weight: node.weight !== null ? Number(node.weight) : null
+      }));
+      
+      const cleanEdges = graphData.edges.map(edge => ({
+        id: Number(edge.id),
+        from: Number(edge.from),
+        to: Number(edge.to),
+        weight: edge.weight !== null ? Number(edge.weight) : null,
+        directed: Boolean(edge.directed)
+      }));
+      
+      const requestData = {
+        nodes: cleanNodes,
+        edges: cleanEdges,
+        algorithm: algorithmName,
+        source: graph.currentNode !== null ? Number(graph.currentNode) : null
+      };
+
+      console.log('Dados sendo enviados para o backend:', requestData);
+
+      const response = await fetch('http://localhost:5000/api/grafo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', 
+        body: JSON.stringify(requestData)
+      });
+      
+
+      if (!response.ok) {
+        throw new Error('Erro ao iniciar algoritmo no backend');
+      }
+
+      console.log('Algoritmo iniciado no backend');
+      return true;
+    } catch (error) {
+      console.error('Erro ao iniciar algoritmo:', error);
+      return false;
+    }
+  };
+
+  // Função para executar um passo do algoritmo
+  const executeStep = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/step', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include' 
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao executar passo do algoritmo');
+      }
+
+      const data = await response.json();
+      
+      // Atualiza o grafo com os dados retornados (formato complexo da API)
+      graph.importFromJSONAPI(data);
+      updateNodesState();
+      
+      // Atualiza o step
+      setStep(data.step || 0);
+      
+      // Verifica se o algoritmo terminou
+      if (data.finished) {
+        stopAnimation();
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Erro ao executar passo:', error);
+      stopAnimation();
+      return null;
+    }
+  };
+
+  // Função para iniciar a animação
+  const startAnimation = async (algorithm = 'bfs') => {
+    if (isAnimating) {
+      stopAnimation();
+      return;
+    }
+
+    // Garante que algorithm seja uma string válida
+    const algorithmName = typeof algorithm === 'string' ? algorithm : 'bfs';
+
+    // Inicia o algoritmo no backend
+    const success = await startAlgorithm(algorithmName);
+    if (!success) {
+      console.error('Falha ao iniciar algoritmo');
+      return;
+    }
+
+    setIsAnimating(true);
+    
+    // Executa o primeiro passo imediatamente
+    await executeStep();
+    
+    // Configura o intervalo para executar passos a cada 1 segundo
+    const newIntervalId = setInterval(async () => {
+      await executeStep();
+    }, 1000);
+    
+    setIntervalId(newIntervalId);
+  };
+
+  // Função para parar a animação
+  const stopAnimation = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+    setIsAnimating(false);
+  };
+
+  // Função para executar próximo passo manualmente
+  const nextStep = async () => {
+    if (!isAnimating) {
+      await startAlgorithm('bfs');
+    }
+    await executeStep();
+  };
+
+  // Função para reiniciar a animação
+  const restartAnimation = async () => {
+    stopAnimation();
+    setStep(0);
+    // Reseta o estado dos nós para DEFAULT
+    nodes.forEach(node => {
+      graph.setNodeState(node.id, NodeState.DEFAULT);
+    });
+    updateNodesState();
+    
+    // Inicia novamente
+    await startAnimation('bfs');
+  };
 
   const handleSelectNode = (nodeId) => {
     if (selectedNode !== null) {
@@ -235,7 +391,7 @@ export const useGraphManager = () => {
       const y2 = to.y;
       const dx = x2 - x1;
       const dy = y2 - y1;
-      const length = Math.sqrt(dx * dx + dy * dy);0
+      const length = Math.sqrt(dx * dx + dy * dy);
       const angleRad = Math.atan2(dy, dx);
       const angle = angleRad * 180 / Math.PI;
 
@@ -304,6 +460,8 @@ export const useGraphManager = () => {
     editingNodeId,
     editingEdgeId,
     canvasRef,
+    isAnimating,
+    step,
     
     // Funções
     updateNodesState,
@@ -324,6 +482,10 @@ export const useGraphManager = () => {
     startEditNodeWeight,
     commitNodeWeight,
     cancelEditNodeWeight,
+    startAnimation,
+    stopAnimation,
+    nextStep,
+    restartAnimation,
     
     // Métodos do grafo (para informações)
     getNodeCount: () => graph.getNodeCount(),

@@ -20,10 +20,11 @@ const Body = () => {
     editingNodeId,
     editingEdgeId,
     canvasRef,
+    isAnimating,
+    step,
     handleCanvasDoubleClick,
     handleNodeClick,
     handleNodeDoubleClick,
-    handleNodeMouseDown,
     handleNodeContextMenu,
     handleClearGraph,
     handleSaveGraph,
@@ -37,6 +38,10 @@ const Body = () => {
     startEditNodeWeight,
     commitNodeWeight,
     cancelEditNodeWeight,
+    startAnimation,
+    stopAnimation,
+    nextStep,
+    restartAnimation,
     getNodeCount,
     getEdgeCount
   } = useGraphManager();
@@ -45,18 +50,6 @@ const Body = () => {
   const routeName = location.pathname.replace('/', '');
   
   const [activeTab, setActiveTab] = React.useState('pseudocode'); // 'pseudocode' ou 'explanation'
-  const [step, setStep] = React.useState(0);
-
-  function playAnimation() {
-    intervalId = setInterval(async () => {
-      const response = await fetch('http://localhost:5000/algoritmo/estado');
-      const data = await response.json();
-      loadGraphFromPath(data.graph);
-      if (data.finished) {
-        clearInterval(intervalId);
-      }
-    }, 1000);
-  }
 
   return (
     <section className='container_body'>
@@ -76,7 +69,6 @@ const Body = () => {
                       state={node.state}
                       onClick={handleNodeClick}
                       onDoubleClick={handleNodeDoubleClick}
-                      onMouseDown={handleNodeMouseDown}
                       onContextMenu={handleNodeContextMenu}
                       isEditing={editingNodeId === node.id}
                       onCommitWeight={commitNodeWeight}
@@ -87,7 +79,13 @@ const Body = () => {
                 <Tooltip>
                   <ButtonHelp className='button_help'></ButtonHelp>
                 </Tooltip>
-                <AnimationControl onPlay={playAnimation} className='animation_control'/>
+                <AnimationControl 
+                  onPlay={() => startAnimation('bfs')} 
+                  onNext={() => nextStep()}
+                  onRestart={() => restartAnimation()}
+                  isPlaying={isAnimating}
+                  className='animation_control' 
+                />
             </div>
         </div>
         <div className='right_side'>

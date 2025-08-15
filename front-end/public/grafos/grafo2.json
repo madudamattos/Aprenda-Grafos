@@ -34,7 +34,5 @@
       "weight": null,
       "directed": true
     }
-  ],
-  "nextNodeId": 4,
-  "nextEdgeId": 3
+  ]
 }
