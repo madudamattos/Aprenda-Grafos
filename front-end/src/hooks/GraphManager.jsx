@@ -47,7 +47,7 @@ export const useGraphManager = () => {
       // console.log(`Nó ${nodeId} deselecionado`);
     } else {
       // Conecta criando aresta direcionada selectedNode -> nodeId
-      const edge = graph.addEdge(selectedNode, nodeId, { weight: null, directed: true });
+      const edge = graph.addEdge(selectedNode, nodeId, { weight: null, directed: false });
       if (edge) {
         updateNodesState();
       } else {

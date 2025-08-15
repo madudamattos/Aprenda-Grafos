@@ -5,7 +5,7 @@ class Graph {
     this.edges = new Map(); // id -> { id, from, to, weight, directed }
     this.nextNodeId = 1;
     this.nextEdgeId = 1;
-    this.maxNodeCount = 8;
+    this.maxNodeCount = 10;
     this.nodeCount = this.nodes.size;
     // console.log('Graph initialized:', { nodes: this.nodes, edges: this.edges }); // Debug log
   }

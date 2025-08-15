@@ -10,6 +10,7 @@ import ButtonContainer2 from '../ButtonContainer2/ButtonContainer2'
 import ButtonContainer1 from '../ButtonContainer1/ButtonContainer1'
 import { useLocation } from 'react-router-dom';
 import TextComponent from '../TextComponent/TextComponent'
+import ContextMenu from '../ContextMenu/ContextMenu'
 
 const Body = () => {
   const {
@@ -45,6 +46,17 @@ const Body = () => {
   
   const [activeTab, setActiveTab] = React.useState('pseudocode'); // 'pseudocode' ou 'explanation'
   
+  function playAnimation() {
+    intervalId = setInterval(async () => {
+      const response = await fetch('http://localhost:5000/algoritmo/estado');
+      const data = await response.json();
+      loadGraphFromPath(data.graph);
+      if (data.finished) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
+  }
+
   return (
     <section className='container_body'>
       <div className='main_div_body'>
@@ -74,7 +86,7 @@ const Body = () => {
                 <Tooltip>
                   <ButtonHelp className='button_help'></ButtonHelp>
                 </Tooltip>
-                <AnimationControl className='animation_control'/>
+                <AnimationControl onPlay={playAnimation} className='animation_control'/>
             </div>
         </div>
         <div className='right_side'>
@@ -82,21 +94,16 @@ const Body = () => {
           <TextComponent routeName={routeName} activeTab={activeTab}/>
         </div>
       </div>
-      {contextMenu.visible && (
-        <div className='context-menu' style={{ left: contextMenu.x, top: contextMenu.y }} onMouseLeave={hideContextMenu}>
-          {contextMenu.type === 'node' && (
-            <>
-              <button onClick={deleteNode}>Deletar nó</button>
-            </>
-          )}
-          {contextMenu.type === 'edge' && (
-            <>
-              <button onClick={deleteEdge}>Deletar aresta</button>
-              <button onClick={toggleEdgeDirected}>Alternar direcionamento (direcionada/não)</button>
-            </>
-          )}
-        </div>
-      )}
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        type={contextMenu.type}
+        onDeleteNode={deleteNode}
+        onDeleteEdge={deleteEdge}
+        onToggleEdgeDirected={toggleEdgeDirected}
+        onMouseLeave={hideContextMenu}
+      />
     </section>
   )
 }
