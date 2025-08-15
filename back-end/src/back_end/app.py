@@ -14,7 +14,7 @@ app.secret_key = "secret key"  # TODO: Change this!
 logging.basicConfig(level=logging.DEBUG)
 
 
-@app.route("/api/grafo", methods=["GET"])
+@app.route("/api/grafo", methods=["POST"])
 def grafo():
     data = request.get_json()
     graph = GraphParser.json_to_graph(data)
