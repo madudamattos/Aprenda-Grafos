@@ -45,7 +45,8 @@ const Body = () => {
   const routeName = location.pathname.replace('/', '');
   
   const [activeTab, setActiveTab] = React.useState('pseudocode'); // 'pseudocode' ou 'explanation'
-  
+  const [step, setStep] = React.useState(0);
+
   function playAnimation() {
     intervalId = setInterval(async () => {
       const response = await fetch('http://localhost:5000/algoritmo/estado');
@@ -91,7 +92,7 @@ const Body = () => {
         </div>
         <div className='right_side'>
           <ButtonContainer2 onTabChange={setActiveTab} activeTab={activeTab}/>
-          <TextComponent routeName={routeName} activeTab={activeTab}/>
+          <TextComponent routeName={routeName} activeTab={activeTab} step={step}/>
         </div>
       </div>
       <ContextMenu

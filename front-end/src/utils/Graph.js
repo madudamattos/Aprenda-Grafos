@@ -1,13 +1,19 @@
+export const NodeState = {
+  DEFAULT: 'default',
+  UNVISITED: 'unvisited',
+  VISITED: 'visited',
+  VISITING: 'visiting',
+};
+
 class Graph {
   constructor() {
     console.log('Graph constructor called'); // Debug log
     this.nodes = new Map(); // id -> { id, x, y, weight }
     this.edges = new Map(); // id -> { id, from, to, weight, directed }
-    this.nextNodeId = 1;
-    this.nextEdgeId = 1;
     this.maxNodeCount = 10;
     this.nodeCount = this.nodes.size;
-    // console.log('Graph initialized:', { nodes: this.nodes, edges: this.edges }); // Debug log
+    this.nodeState = NodeState.DEFAULT; // Estado inicial do nó
+    this.currentNode = null;
   }
 
   // Adiciona um novo nó na posição especificada
@@ -15,14 +21,12 @@ class Graph {
     // se atingiu o numero máximo de nós, retorna null;
     if (this.nodes.size >= this.maxNodeCount) return null;
 
-    const nodeId = this.nextNodeId;
-    const node = { id: nodeId, x, y, weight: null };
-
-    this.nodes.set(nodeId, node);
-    this.nextNodeId++;
-
-    // console.log(`Node ${nodeId} added at (${x}, ${y})`); // Debug log
-    return node;
+  // Calcula o próximo id como o maior id existente + 1, ou 0 se não houver nós
+  const nodeId = this.nodes.size === 0 ? 0 : Math.max(...this.nodes.keys()) + 1;
+  const node = { id: nodeId, x, y, weight: null };
+  this.nodes.set(nodeId, node);
+  // console.log(`Node ${nodeId} added at (${x}, ${y})`); // Debug log
+  return node;
   }
 
   // Remove um nó e todas as arestas incidentes
@@ -52,10 +56,11 @@ class Graph {
       if (this.hasAnyEdgeBetween(from, to)) return null;
     }
 
-    const edgeId = this.nextEdgeId++;
-    const edge = { id: edgeId, from, to, weight, directed };
-    this.edges.set(edgeId, edge);
-    return edge;
+  // Calcula o próximo id como o maior id existente + 1, ou 0 se não houver arestas
+  const edgeId = this.edges.size === 0 ? 0 : Math.max(...this.edges.keys()) + 1;
+  const edge = { id: edgeId, from, to, weight, directed };
+  this.edges.set(edgeId, edge);
+  return edge;
   }
 
   // Remove uma aresta por id
@@ -204,8 +209,8 @@ class Graph {
   clear() {
     this.nodes.clear();
     this.edges.clear();
-    this.nextNodeId = 1;
-    this.nextEdgeId = 1;
+  // Não usamos mais nextNodeId
+  // Não usamos mais nextEdgeId
   }
 
   // Obtém o número de nós
@@ -238,8 +243,6 @@ class Graph {
     return {
       nodes,
       edges,
-      nextNodeId: this.nextNodeId,
-      nextEdgeId: this.nextEdgeId,
     };
   }
 
@@ -276,8 +279,6 @@ class Graph {
       }
     });
 
-    this.nextNodeId = data.nextNodeId || (this.nodes.size + 1);
-    this.nextEdgeId = data.nextEdgeId || (this.edges.size + 1);
   }
 }
 
